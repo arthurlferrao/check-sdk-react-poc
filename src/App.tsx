@@ -16,6 +16,7 @@ const RESOURCES_DIRECTORY = "/resources"
 const MODELS_PATH = "https://localhost:3000/models"
 
 function App() {
+  // Definições de tema para customização do frame de câmera
   const unicoTheme = new UnicoThemeBuilder()
     .setColorSilhouetteSuccess("#0384fc")
     .setColorSilhouetteError("#D50000")
@@ -32,12 +33,18 @@ function App() {
       translate(50%, -50%); z-index: 10; text-align: center;">Carregando...</div>`)
     .build()
 
+  /*
+    Criar instancia para câmera.
+    Recursos adicionais são necessários com funcionalidades da Facetec.
+    Arquivos dos modelos de IA necessários para Câmera Inteligente.
+  */
   const unicoCamera = new UnicoCheckBuilder()
     .setResourceDirectory(RESOURCES_DIRECTORY)
     .setModelsPath(MODELS_PATH)
     .setTheme(unicoTheme)
     .build()
   
+  // Objeto com funções callback para casos de sucesso e erro
   const callback: CallbackCamera = {
     on: {
       success: function(obj: SuccessPictureResponse) {
@@ -53,13 +60,13 @@ function App() {
     }
   }
 
-  const startSelfCamera = async (jsonPath: string, selfieType: SelfieCameraType) => {
-    const { open } = await unicoCamera.prepareSelfieCamera(jsonPath, selfieType)
+  const startSelfCamera = async (apiKeyPath: string, selfieType: SelfieCameraType) => {
+    const { open } = await unicoCamera.prepareSelfieCamera(apiKeyPath, selfieType)
     open(callback)
   }
 
-  const startDocumentCamera = async (jsonPath: string, documentType: DocumentCameraType) => {
-    const { open } = await unicoCamera.prepareDocumentCamera(jsonPath, documentType)
+  const startDocumentCamera = async (apiKeyPath: string, documentType: DocumentCameraType) => {
+    const { open } = await unicoCamera.prepareDocumentCamera(apiKeyPath, documentType)
     open(callback)
   }
 
@@ -67,15 +74,18 @@ function App() {
   return (
     <div className="App">
       <button onClick={() => startSelfCamera("/services.json", SelfieCameraTypes.NORMAL)}>
+        Start Facetec Camera
+      </button>
+      <button onClick={() => startSelfCamera("/services-sem-facetec.json", SelfieCameraTypes.NORMAL)}>
         Start Normal Camera
       </button>
-      <button onClick={() => startSelfCamera("/services.json", SelfieCameraTypes.SMART)}>
+      <button onClick={() => startSelfCamera("/services-sem-facetec.json", SelfieCameraTypes.SMART)}>
         Start Smart Camera
       </button>
-      <button onClick={() => startDocumentCamera("/services.json", DocumentCameraTypes.CNH)}>
+      <button onClick={() => startDocumentCamera("/services-sem-facetec.json", DocumentCameraTypes.CNH)}>
         Start CNH Camera
       </button>
-      <button onClick={() => startDocumentCamera("/services.json", DocumentCameraTypes.OTHERS("Other"))}>
+      <button onClick={() => startDocumentCamera("/services-sem-facetec.json", DocumentCameraTypes.OTHERS("Other"))}>
         Start Generic Document Camera
       </button>
       <div id="box-camera"></div>
